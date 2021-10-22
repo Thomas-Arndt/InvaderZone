@@ -165,6 +165,8 @@
 	var playerOne = {
 		left: 400,
 		top: 620,
+		vectorX: 0,
+		vectorY: 0,
 		score: 0,
 		life: 3,
 		attack: 1,
@@ -271,6 +273,11 @@
 		}
 	}
 
+	function movePlayer(){
+		playerOne.left += playerOne.vectorX;
+		playerOne.top += playerOne.vectorY;
+	}
+
 	function moveEnemies(){
 		sphereSequence();
 		var sineEvasion = Math.sin(Math.PI*(delta/90));
@@ -284,6 +291,40 @@
 		}
 	}
 	
+	function blasterFire(){
+		if(playerOne.attack < 3){ // Level one attack
+				missiles.push({left: (playerOne.left+31), top: (playerOne.top-12), vectorX: 0, vectorY: -8, active: 1});
+			}
+			else if(playerOne.attack < 6){ // Level two attack
+				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
+				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
+			}
+			else if(playerOne.attack < 9){ // Level three attack
+				missiles.push({left: (playerOne.left+31), top: (playerOne.top-12), vectorX: 0, vectorY: -8, active: 1});
+				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: -5, vectorY: -7, active: 1});
+				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 5, vectorY: -7, active: 1});
+			}
+			else if(playerOne.attack < 12){ // Level four attack
+				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
+				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
+				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: -5, vectorY: -7, active: 1});
+				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 5, vectorY: -7, active: 1});
+			}
+			else if(playerOne.attack >= 12){ // Level five attack
+				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
+				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
+				missiles.push({left: (playerOne.left+20), top: (playerOne.top+25), vectorX: -5, vectorY: -7, active: 1});
+				missiles.push({left: (playerOne.left+42), top: (playerOne.top+25), vectorX: 5, vectorY: -7, active: 1});
+				missiles.push({left: (playerOne.left+5), top: (playerOne.top+50), vectorX: -5, vectorY: -7, active: 1});
+				missiles.push({left: (playerOne.left+56), top: (playerOne.top+50), vectorX: 5, vectorY: -7, active: 1});
+			}
+			if(playerOne.score>0){
+				playerOne.score--;
+			}
+			weaponCharged = false;
+			setTimeout(blasterRecharge, 125);
+	}
+
 	function moveMissiles(){
 		for(var mid=0; mid<missiles.length; mid++){
 			missiles[mid].left += missiles[mid].vectorX;
@@ -418,7 +459,6 @@
 							playerOne.score += 10;
 							boxDrop(enemies[eid].left, enemies[eid].top);
 						}
-						updateHud();
 					}
 				}
 			}
@@ -443,7 +483,6 @@
 					drawPlayer();
 					drawEnemies();
 					clearInactive();
-					updateHud();
 				}
 			}
 		}
@@ -566,6 +605,7 @@
 
 		clearInactive();
 		drawProjectiles();
+		updateHud();
 
 		delta++;
 		if(gameOn){
@@ -592,41 +632,9 @@
 			playerOne.top += 20;
 		}
 		else if(e.keyCode == 32 && gameOn && weaponCharged){ // Fire
-			console.log(playerOne.attack);
-			if(playerOne.attack < 3){ // Level one attack
-				missiles.push({left: (playerOne.left+31), top: (playerOne.top-12), vectorX: 0, vectorY: -8, active: 1});
-			}
-			else if(playerOne.attack < 6){ // Level two attack
-				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-			}
-			else if(playerOne.attack < 9){ // Level three attack
-				missiles.push({left: (playerOne.left+31), top: (playerOne.top-12), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: -5, vectorY: -7, active: 1});
-				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 5, vectorY: -7, active: 1});
-			}
-			else if(playerOne.attack < 12){ // Level four attack
-				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: -5, vectorY: -7, active: 1});
-				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 5, vectorY: -7, active: 1});
-			}
-			else if(playerOne.attack >= 12){ // Level five attack
-				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+20), top: (playerOne.top+25), vectorX: -5, vectorY: -7, active: 1});
-				missiles.push({left: (playerOne.left+42), top: (playerOne.top+25), vectorX: 5, vectorY: -7, active: 1});
-				missiles.push({left: (playerOne.left+5), top: (playerOne.top+50), vectorX: -5, vectorY: -7, active: 1});
-				missiles.push({left: (playerOne.left+56), top: (playerOne.top+50), vectorX: 5, vectorY: -7, active: 1});
-			}
-			if(playerOne.score>0){
-				playerOne.score--;
-			}
-			weaponCharged = false;
-			setTimeout(blasterRecharge, 125);
-			updateHud();
+			blasterFire();
 		}
-		else if(e.keyCode == 27){
+		else if(e.keyCode == 27){ // Pause gameloop
 			if(gameOn){
 				gameOn = false;
 				document.getElementById("centerMessage").innerHTML = "Paused";
