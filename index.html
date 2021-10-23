@@ -220,7 +220,6 @@
 			}
 			drawEnemies();
 			if(gameOn){
-				console.log(gameSpeed);
 				setTimeout(newWave, (gameSpeed*10000)); // Send a new wave of enemies in (10*gameSpeed) seconds
 			}
 		}
@@ -274,8 +273,18 @@
 	}
 
 	function movePlayer(){
-		playerOne.left += playerOne.vectorX;
-		playerOne.top += playerOne.vectorY;
+		if((playerOne.left+playerOne.vectorX+70) < 890 && (playerOne.left+playerOne.vectorX) > 10){
+			playerOne.left += playerOne.vectorX;
+		}
+		else{
+			playerOne.vectorX = 0;
+		}
+		if((playerOne.top+playerOne.vectorY+75) < 740 && (playerOne.top+playerOne.vectorY) > 10){
+			playerOne.top += playerOne.vectorY;
+		}
+		else{
+			playerOne.vectorY = 0;
+		}
 	}
 
 	function moveEnemies(){
@@ -588,8 +597,8 @@
 		clearInactive();
 	}
 
-
 	function gameLoop(){
+		movePlayer();
 		drawPlayer();
 
 		moveEnemies();
@@ -617,24 +626,24 @@
 // Gameplay
 
 	document.onkeydown = function(e){
-		//console.log(e);
+		console.log(e);
 		
-		if(e.keyCode == 37 && (playerOne.left-10) >= 10 && gameOn){ // Left
-			playerOne.left -= 20;
+		if(e.keyCode == 65 && gameOn){ // Left
+			playerOne.vectorX = -8;
 		}
-		else if(e.keyCode == 39 && (playerOne.left+100) <= 900 && gameOn){ // Right
-			playerOne.left += 20;
+		else if(e.keyCode == 68 && gameOn){ // Right
+			playerOne.vectorX = 8;
 		}
-		else if(e.keyCode == 38 && (playerOne.top-10) >= 475 && gameOn){ // Up
-			playerOne.top -= 20;
+		else if(e.keyCode == 87 && gameOn){ // Up
+			playerOne.vectorY = -8;
 		}
-		else if(e.keyCode == 40 && (playerOne.top+10 <= 660) && gameOn){ // Down
-			playerOne.top += 20;
+		else if(e.keyCode == 83 && gameOn){ // Down
+			playerOne.vectorY = 8;
 		}
-		else if(e.keyCode == 32 && gameOn && weaponCharged){ // Fire
+		if(e.keyCode == 32 && gameOn && weaponCharged){ // Fire
 			blasterFire();
 		}
-		else if(e.keyCode == 27){ // Pause gameloop
+		if(e.keyCode == 27){ // Pause gameloop
 			if(gameOn){
 				gameOn = false;
 				document.getElementById("centerMessage").innerHTML = "Paused";
@@ -647,6 +656,23 @@
 				setTimeout(newWave, (gameSpeed*10000));
 				setTimeout(spawnSphere, 18000, -120, 200);
 			}
+		}
+		drawPlayer();
+	}
+
+	document.onkeyup = function(e){
+		console.log(e);
+		if(e.keyCode == 65 && gameOn){ // Left
+			playerOne.vectorX = 0;
+		}
+		if(e.keyCode == 68 && gameOn){ // Right
+			playerOne.vectorX = 0;
+		}
+		if(e.keyCode == 87 && gameOn){ // Up
+			playerOne.vectorY = 0;
+		}
+		if(e.keyCode == 83 && gameOn){ // Down
+			playerOne.vectorY = 0;
 		}
 		drawPlayer();
 	}
