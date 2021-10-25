@@ -296,7 +296,6 @@
 			}
 			enemies[eid].top += enemies[eid].vectorY;
 			enemies[eid].left += enemies[eid].vectorX;
-
 		}
 	}
 	
@@ -407,7 +406,7 @@
 		else if(chance >= 1 && chance < 4){ // Drop shield
 			boxes.push({left: (left+31), top: (top-12), type: 2, active: 1});
 		}
-		else if(chance >=4 && chance < 11){ // Drop weapon upgrade
+		else if(chance >=4 && chance < 10){ // Drop weapon upgrade
 			boxes.push({left: (left+31), top: (top-12), type: 1, active: 1});
 		}
 
@@ -606,6 +605,7 @@
 
 		moveMissiles();
 		moveEnergyBalls();
+		drawProjectiles();
 
 		moveBoxes();
 		drawBoxes();
@@ -613,7 +613,6 @@
 		eventCheck();
 
 		clearInactive();
-		drawProjectiles();
 		updateHud();
 
 		delta++;
@@ -681,7 +680,7 @@
 
 	gameLoop(); // Run game
 	newWave(); // Send first wave
-	returnFire(); // Dodge!
+	returnFire(); // Stuff to dodge!
 	setTimeout(spawnSphere, 18000, -120, 200); // Set timer for first sphere sequence
 	
 
