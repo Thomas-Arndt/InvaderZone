@@ -19,7 +19,7 @@
 		background-color: gray;
 		color: white;
 		width: 900px;
-		height: 80px;
+		height: 83px;
 		position: absolute;
 		top: 750px;
 	}
@@ -29,13 +29,13 @@
 	}
 	#scoreDisplay{
 		width: 200px;
-		height: 80px;
+		height: 75px;
 		color: cyan;
 		background-color: transparent;
 		position: absolute;
 		top: 4px;
 		right: 4px;
-		text-align: center;
+		text-align: right;
 		font-size: 62px;
 	}
 	#centerMessage{
@@ -51,15 +51,12 @@
 		font-size: 62px;
 	}
 	#livesDisplay{
-		width: 750px;
-		height: 80px;
-		color: lightblue;
+		width: 375px;
+		height: 75px;
 		background-color: transparent;
 		position: absolute;
 		top: 4px;
 		left: 4px;
-		text-align: center;
-		font-size: 62px;
 		display: flex;
 		justify-content: space-evenly;
 		justify-content: left;
@@ -86,6 +83,12 @@
 		background-image: url("img/sphereShip.png");
 		width: 120px;
 		height: 120px;
+		position: absolute;
+	}
+	.enemy3{
+		background-image: url("img/Alien Starfighter.png");
+		width: 70px;
+		height: 75px;
 		position: absolute;
 	}
 	.missile{
@@ -187,33 +190,33 @@
 
 	function drawPlayer(){
 		if(playerOne.shield){
-			var content = "<div class='shield' style='left:"+playerOne.left+"px; top:"+playerOne.top+"px; '></div>";
+			var playerContent = "<div class='shield' style='left:"+playerOne.left+"px; top:"+playerOne.top+"px; '></div>";
 		}
 		else{
-			var content = "<div class='playerOne' style='left:"+playerOne.left+"px; top:"+playerOne.top+"px; '></div>";
+			var playerContent = "<div class='playerOne' style='left:"+playerOne.left+"px; top:"+playerOne.top+"px; '></div>";
 		}
 		
-			document.getElementById("players").innerHTML = content;
+			document.getElementById("players").innerHTML = playerContent;
 	}	
 
 	function drawEnemies(){
-		var content = "";
+		var enemyContent = "";
 
 		for(var eid=0; eid<enemies.length; eid++){
-			content += "<div class='"+enemies[eid].type+"' style='left:"+enemies[eid].left+"px; top:"+enemies[eid].top+"px;'></div>";
+			enemyContent += "<div class='"+enemies[eid].type+"' style='left:"+enemies[eid].left+"px; top:"+enemies[eid].top+"px; transform: rotate("+(enemies[eid].angle*57)+"deg);'></div>";
 		}
-		document.getElementById("enemies").innerHTML = content;
+		document.getElementById("enemies").innerHTML = enemyContent;
 	}
 
 	function newWave(){
 		if(gameOn){
 			wave = [
-				{left: 150, top: -75, active: 1, type: "enemy1", life: 1, vectorX: 0, vectorY: 1},
-				{left: 250, top: -125, active: 1, type: "enemy1", life: 1, vectorX: 0, vectorY: 1},
-				{left: 350, top: -75, active: 1, type: "enemy1", life: 1, vectorX: 0, vectorY: 1},
-				{left: 450, top: -125, active: 1, type: "enemy1", life: 1, vectorX: 0, vectorY: 1},
-				{left: 550, top: -75, active: 1, type: "enemy1", life: 1, vectorX: 0, vectorY: 1},
-				{left: 650, top: -125, active: 1, type: "enemy1", life: 1, vectorX: 0, vectorY: 1}
+				{left: 150, top: -75, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0},
+				{left: 250, top: -125, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0},
+				{left: 350, top: -75, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0},
+				{left: 450, top: -125, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0},
+				{left: 550, top: -75, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0},
+				{left: 650, top: -125, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0}
 			];
 			for(var idx=0; idx<wave.length; idx++){
 				enemies.push(wave[idx]);
@@ -225,8 +228,33 @@
 		}
 	}
 
+	function spawnStarfighter(leftStartPos, topStartPos, leftEndPos, topEndPos){
+		var deltaX = leftEndPos - leftStartPos;
+		var deltaY = topStartPos - topEndPos;
+		var angleStart = Math.atan2(deltaY, deltaX);
+		var velocityX = 10*Math.cos(angleStart);
+		var velocityY = -10*Math.sin(angleStart);
+		enemies.push({left: leftStartPos, top: topStartPos, leftEnd: leftEndPos, topEnd: topEndPos, active: 1, type: "enemy1", life: 2, vectorX: velocityX, vectorY: velocityY, angle: (-angleStart)-90, seqPointer: 0});
+	}
+
+	function starfighterSequence(){
+		for (var eid = 0; eid<enemies.length; eid++){
+			if(enemies[eid].type == "enemy1" && enemies[eid].active == 1){
+				if(Math.abs(enemies[eid].leftEnd-enemies[eid].left) <= 5 && Math.abs(enemies[eid].topEnd-enemies[eid].top) <= 5)
+				{
+					enemies[eid].vectorX = 0;
+					enemies[eid].vectorY = 0;
+					var deltaX = playerOne.left- enemies[eid].left;
+					var deltaY = playerOne.top - enemies[eid].top;
+					var angleNew = Math.atan2(deltaY, deltaX);
+					enemies[eid].angle = angleNew -90;
+				}
+			}
+		}
+	}
+
 	function spawnSphere(leftPos, topPos){
-		enemies.push({left: leftPos, top: topPos, active: 1, type: "enemy2", life: 4, vectorX: 0, vectorY: 0, seqPointer: 0});
+		enemies.push({left: leftPos, top: topPos, active: 1, type: "enemy2", life: 5, vectorX: 0, vectorY: 0, angle: 0, seqPointer: 0});
 		if(gameOn){
 			setTimeout(spawnSphere, 18000, -120, 200);
 		}
@@ -289,9 +317,10 @@
 
 	function moveEnemies(){
 		sphereSequence();
+		starfighterSequence();
 		var sineEvasion = Math.sin(Math.PI*(delta/90));
 		for(var eid=0; eid<enemies.length; eid++){
-			if(enemies[eid].type == "enemy1"){		
+			if(enemies[eid].type == "enemy3"){		
 				enemies[eid].vectorX = sineEvasion*1.15;
 			}
 			enemies[eid].top += enemies[eid].vectorY;
@@ -346,7 +375,7 @@
 			var deltaY = playerOne.top - enemies[eid].top;
 			var speedX = 5*(deltaX/deltaY);
 			
-			if(enemies[eid].type == "enemy1"){
+			if(enemies[eid].type == "enemy3"){
 				if(Math.random()<=0.20){
 					energyBalls.push({left: (enemies[eid].left+22), top: (enemies[eid].top+52), active: 1, vectorX: speedX, vectorY: 5});
 				}
@@ -356,16 +385,16 @@
 	}
 
 	function drawProjectiles(){
-		var content = "";
+		var projectileContent = "";
 		for(var idx=0; idx<missiles.length; idx++){
-			content += '<div class="missile" style="left:'+missiles[idx].left+'px; top:'+missiles[idx].top+'px; transform: rotate('+missiles[idx].angle+'deg)"></div>';
+			projectileContent += '<div class="missile" style="left:'+missiles[idx].left+'px; top:'+missiles[idx].top+'px; transform: rotate('+missiles[idx].angle+'deg)"></div>';
 		}
-		document.getElementById('missiles').innerHTML = content;
-		content = "";
+		document.getElementById('missiles').innerHTML = projectileContent;
+		projectileContent = "";
 		for(var idx=0; idx<energyBalls.length; idx++){
-			content += '<div class="energyBall" style="left:'+energyBalls[idx].left+'px; top:'+energyBalls[idx].top+'px"></div>';
+			projectileContent += '<div class="energyBall" style="left:'+energyBalls[idx].left+'px; top:'+energyBalls[idx].top+'px"></div>';
 		}
-		document.getElementById('energyballs').innerHTML = content;
+		document.getElementById('energyballs').innerHTML = projectileContent;
 	}
 
 	function moveEnergyBalls(){
@@ -376,20 +405,20 @@
 	}
 
 	function drawBoxes(){
-		var content = "";
+		var boxContent = "";
 
 		for(var idx=0; idx<boxes.length; idx++){
 			if(boxes[idx].type == 1){
-				content += "<div class='redBox' style='left:"+boxes[idx].left+"px; top:"+boxes[idx].top+"px;'></div>";
+				boxContent += "<div class='redBox' style='left:"+boxes[idx].left+"px; top:"+boxes[idx].top+"px;'></div>";
 			}
 			else if(boxes[idx].type == 2){
-				content += "<div class='blueBox' style='left:"+boxes[idx].left+"px; top:"+boxes[idx].top+"px;'></div>";
+				boxContent += "<div class='blueBox' style='left:"+boxes[idx].left+"px; top:"+boxes[idx].top+"px;'></div>";
 			}
 			else if(boxes[idx].type == 3){
-				content += "<div class='purpleBox' style='left:"+boxes[idx].left+"px; top:"+boxes[idx].top+"px;'></div>";
+				boxContent += "<div class='purpleBox' style='left:"+boxes[idx].left+"px; top:"+boxes[idx].top+"px;'></div>";
 			}
 		}
-		document.getElementById("boxes").innerHTML = content;
+		document.getElementById("boxes").innerHTML = boxContent;
 	}
 
 	function moveBoxes(){
@@ -575,13 +604,13 @@
 	}
 
 	function updateHud(){
-		var content = "";
+		var hudContent = "";
 		for(var idx=1; idx<=playerOne.life; idx++){
-			content += "<div class='life'></div>";
+			hudContent += "<div class='life'></div>";
 		}
-		document.getElementById("livesDisplay").innerHTML = content;
-
-		document.getElementById("scoreDisplay").innerHTML = '<div id="score">'+playerOne.score+'</div>';
+		document.getElementById("livesDisplay").innerHTML = hudContent;
+		console.log(hudContent);
+		document.getElementById("scoreDisplay").innerHTML = '<div id="scoreDisplay">'+playerOne.score+'</div>';
 	}
 
 	function gameOver(){
@@ -625,7 +654,7 @@
 // Gameplay
 
 	document.onkeydown = function(e){
-		console.log(e);
+		//console.log(e);
 		
 		if(e.keyCode == 65 && gameOn){ // Left
 			playerOne.vectorX = -8;
@@ -660,7 +689,7 @@
 	}
 
 	document.onkeyup = function(e){
-		console.log(e);
+		//console.log(e);
 		if(e.keyCode == 65 && gameOn){ // Left
 			playerOne.vectorX = 0;
 		}
@@ -682,7 +711,7 @@
 	newWave(); // Send first wave
 	returnFire(); // Stuff to dodge!
 	setTimeout(spawnSphere, 18000, -120, 200); // Set timer for first sphere sequence
-	
+	//spawnStarfighter(0, 0, 400, 230);
 
 
 	
