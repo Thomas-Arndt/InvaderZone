@@ -168,8 +168,7 @@
 	var playerOne = {
 		left: 400,
 		top: 620,
-		vectorX: 0,
-		vectorY: 0,
+		velocity: {x: 0, y: 0},
 		score: 0,
 		life: 3,
 		attack: 1,
@@ -211,12 +210,12 @@
 	function newWave(){
 		if(gameOn){
 			wave = [
-				{left: 150, top: -75, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0},
-				{left: 250, top: -125, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0},
-				{left: 350, top: -75, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0},
-				{left: 450, top: -125, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0},
-				{left: 550, top: -75, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0},
-				{left: 650, top: -125, active: 1, type: "enemy3", life: 1, vectorX: 0, vectorY: 1, angle: 0}
+				{left: 150, top: -75, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0},
+				{left: 250, top: -125, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0},
+				{left: 350, top: -75, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0},
+				{left: 450, top: -125, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0},
+				{left: 550, top: -75, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0},
+				{left: 650, top: -125, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0}
 			];
 			for(var idx=0; idx<wave.length; idx++){
 				enemies.push(wave[idx]);
@@ -234,27 +233,30 @@
 		var angleStart = Math.atan2(deltaY, deltaX);
 		var velocityX = 10*Math.cos(angleStart);
 		var velocityY = -10*Math.sin(angleStart);
-		enemies.push({left: leftStartPos, top: topStartPos, leftEnd: leftEndPos, topEnd: topEndPos, active: 1, type: "enemy1", life: 2, vectorX: velocityX, vectorY: velocityY, angle: (-angleStart)-90, seqPointer: 0});
+		enemies.push({left: leftStartPos, top: topStartPos, leftEnd: leftEndPos, topEnd: topEndPos, active: 1, type: "enemy1", life: 2, velocity: {x: velocityX, y: velocityY}, angle: (-angleStart)-90, seqPointer: 0});
 	}
 
-	function starfighterSequence(){
+	function arrivals(enemyType){
 		for (var eid = 0; eid<enemies.length; eid++){
-			if(enemies[eid].type == "enemy1" && enemies[eid].active == 1){
-				if(Math.abs(enemies[eid].leftEnd-enemies[eid].left) <= 5 && Math.abs(enemies[eid].topEnd-enemies[eid].top) <= 5)
-				{
-					enemies[eid].vectorX = 0;
-					enemies[eid].vectorY = 0;
+			if(enemies[eid].type == enemyType && enemies[eid].active == 1){
+				if(Math.abs(enemies[eid].leftEnd-enemies[eid].left) <= 5 && Math.abs(enemies[eid].topEnd-enemies[eid].top) <= 5){
+					enemies[eid].velocity.x = 0;
+					enemies[eid].velocity.y = 0;
 					var deltaX = playerOne.left- enemies[eid].left;
 					var deltaY = playerOne.top - enemies[eid].top;
 					var angleNew = Math.atan2(deltaY, deltaX);
-					enemies[eid].angle = angleNew -90;
+					enemies[eid].angle = angleNew - 90;
+				}
+				else if(Math.abs(enemies[eid].leftEnd-enemies[eid].left) <= 50 && Math.abs(enemies[eid].topEnd-enemies[eid].top) <= 50){
+					enemies[eid].velocity.x -= 0.5;
+					enemies[eid].velocity.y -= 0.5;
 				}
 			}
 		}
 	}
 
 	function spawnSphere(leftPos, topPos){
-		enemies.push({left: leftPos, top: topPos, active: 1, type: "enemy2", life: 5, vectorX: 0, vectorY: 0, angle: 0, seqPointer: 0});
+		enemies.push({left: leftPos, top: topPos, active: 1, type: "enemy2", life: 5, velocity: {x: 0, y: 0}, angle: 0, seqPointer: 0});
 		if(gameOn){
 			setTimeout(spawnSphere, 18000, -120, 200);
 		}
@@ -268,32 +270,32 @@
 				var speedX = 5*(deltaX/deltaY);
 
 				if(enemies[eid].seqPointer < 50){
-					enemies[eid].vectorX = 6.5;
-					enemies[eid].vectorY = -3;
+					enemies[eid].velocity.x = 6.5;
+					enemies[eid].velocity.y = -3;
 				}
 				else if(enemies[eid].seqPointer < 200){
-					enemies[eid].vectorX = 0;
-					enemies[eid].vectorY = 0;
+					enemies[eid].velocity.x = 0;
+					enemies[eid].velocity.y = 0;
 				}
 				else if(enemies[eid].seqPointer < 255){
-					enemies[eid].vectorX = 7;
+					enemies[eid].velocity.x = 7;
 				}
 				else if(enemies[eid].seqPointer < 405){
-					enemies[eid].vectorX = 0;
-					enemies[eid].vectorY = 0;
+					enemies[eid].velocity.x = 0;
+					enemies[eid].velocity.y = 0;
 				}
 				else if(enemies[eid].seqPointer < 455){
-					enemies[eid].vectorX = 6.5;
-					enemies[eid].vectorY = 3;
+					enemies[eid].velocity.x = 6.5;
+					enemies[eid].velocity.y = 3;
 				}
 				else if(enemies[eid].seqPointer >= 455){
 					enemies[eid].active = 0;
 				}
 				if(enemies[eid].seqPointer == 75 || enemies[eid].seqPointer == 90 || enemies[eid].seqPointer == 105 || enemies[eid].seqPointer == 160 || enemies[eid].seqPointer == 175 || enemies[eid].seqPointer == 190){
-					energyBalls.push({left: (enemies[eid].left+48), top: (enemies[eid].top+48), active: 1, vectorX: speedX, vectorY: 5});
+					energyBalls.push({left: (enemies[eid].left+48), top: (enemies[eid].top+48), active: 1, velocity: {x: speedX, y: 5}});
 				}
 				if(enemies[eid].seqPointer == 280 || enemies[eid].seqPointer == 295 || enemies[eid].seqPointer == 310 || enemies[eid].seqPointer == 365 || enemies[eid].seqPointer == 380 || enemies[eid].seqPointer == 395){
-					energyBalls.push({left: (enemies[eid].left+48), top: (enemies[eid].top+48), active: 1, vectorX: speedX, vectorY: 5});
+					energyBalls.push({left: (enemies[eid].left+48), top: (enemies[eid].top+48), active: 1, velocity: {x: speedX, y: 5}});
 				}
 				enemies[eid].seqPointer++;
 			}
@@ -301,59 +303,59 @@
 	}
 
 	function movePlayer(){
-		if((playerOne.left+playerOne.vectorX+70) < 890 && (playerOne.left+playerOne.vectorX) > 10){
-			playerOne.left += playerOne.vectorX;
+		if((playerOne.left+playerOne.velocity.x+70) < 890 && (playerOne.left+playerOne.velocity.x) > 10){
+			playerOne.left += playerOne.velocity.x;
 		}
 		else{
-			playerOne.vectorX = 0;
+			playerOne.velocity.x = 0;
 		}
-		if((playerOne.top+playerOne.vectorY+75) < 740 && (playerOne.top+playerOne.vectorY) > 10){
-			playerOne.top += playerOne.vectorY;
+		if((playerOne.top+playerOne.velocity.y+75) < 740 && (playerOne.top+playerOne.velocity.y) > 10){
+			playerOne.top += playerOne.velocity.y;
 		}
 		else{
-			playerOne.vectorY = 0;
+			playerOne.velocity.y = 0;
 		}
 	}
 
 	function moveEnemies(){
 		sphereSequence();
-		starfighterSequence();
+		arrivals("enemy1");
 		var sineEvasion = Math.sin(Math.PI*(delta/90));
 		for(var eid=0; eid<enemies.length; eid++){
 			if(enemies[eid].type == "enemy3"){		
-				enemies[eid].vectorX = sineEvasion*1.15;
+				enemies[eid].velocity.x = sineEvasion*1.15;
 			}
-			enemies[eid].top += enemies[eid].vectorY;
-			enemies[eid].left += enemies[eid].vectorX;
+			enemies[eid].top += enemies[eid].velocity.y;
+			enemies[eid].left += enemies[eid].velocity.x;
 		}
 	}
 	
 	function blasterFire(){
 		if(playerOne.attack < 3){ // Level one attack
-				missiles.push({left: (playerOne.left+31), top: (playerOne.top-12), vectorX: 0, vectorY: -8, active: 1});
+				missiles.push({left: (playerOne.left+31), top: (playerOne.top-12), velocity: {x: 0, y: -8}, active: 1});
 			}
 			else if(playerOne.attack < 6){ // Level two attack
-				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
+				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), velocity: {x: 0, y: -8}, active: 1});
+				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), velocity: {x: 0, y: -8}, active: 1});
 			}
 			else if(playerOne.attack < 9){ // Level three attack
-				missiles.push({left: (playerOne.left+31), top: (playerOne.top-12), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: -5, vectorY: -7, active: 1});
-				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 5, vectorY: -7, active: 1});
+				missiles.push({left: (playerOne.left+31), top: (playerOne.top-12), velocity: {x: 0, y: -8}, active: 1});
+				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), velocity: {x: -5, y: -7}, active: 1});
+				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), velocity: {x: 5, y: -7}, active: 1});
 			}
 			else if(playerOne.attack < 12){ // Level four attack
-				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: -5, vectorY: -7, active: 1});
-				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 5, vectorY: -7, active: 1});
+				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), velocity: {x: 0, y: -8}, active: 1});
+				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), velocity: {x: 0, y: -8}, active: 1});
+				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), velocity: {x: -5, y: -7}, active: 1});
+				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), velocity: {x: 5, y: -7}, active: 1});
 			}
 			else if(playerOne.attack >= 12){ // Level five attack
-				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), vectorX: 0, vectorY: -8, active: 1});
-				missiles.push({left: (playerOne.left+20), top: (playerOne.top+25), vectorX: -5, vectorY: -7, active: 1});
-				missiles.push({left: (playerOne.left+42), top: (playerOne.top+25), vectorX: 5, vectorY: -7, active: 1});
-				missiles.push({left: (playerOne.left+5), top: (playerOne.top+50), vectorX: -5, vectorY: -7, active: 1});
-				missiles.push({left: (playerOne.left+56), top: (playerOne.top+50), vectorX: 5, vectorY: -7, active: 1});
+				missiles.push({left: (playerOne.left+15), top: (playerOne.top+35), velocity: {x: 0, y: -8}, active: 1});
+				missiles.push({left: (playerOne.left+47), top: (playerOne.top+35), velocity: {x: 0, y: -8}, active: 1});
+				missiles.push({left: (playerOne.left+20), top: (playerOne.top+25), velocity: {x: -5, y: -7}, active: 1});
+				missiles.push({left: (playerOne.left+42), top: (playerOne.top+25), velocity: {x: 5, y: -7}, active: 1});
+				missiles.push({left: (playerOne.left+5), top: (playerOne.top+50), velocity: {x: -5, y: -7}, active: 1});
+				missiles.push({left: (playerOne.left+56), top: (playerOne.top+50), velocity: {x: 5, y: -7}, active: 1});
 			}
 			if(playerOne.score>0){
 				playerOne.score--;
@@ -364,8 +366,8 @@
 
 	function moveMissiles(){
 		for(var mid=0; mid<missiles.length; mid++){
-			missiles[mid].left += missiles[mid].vectorX;
-			missiles[mid].top += missiles[mid].vectorY;
+			missiles[mid].left += missiles[mid].velocity.x;
+			missiles[mid].top += missiles[mid].velocity.y;
 		}
 	}
 
@@ -373,11 +375,13 @@
 		for(var eid=0; eid<enemies.length; eid++){
 			var deltaX = playerOne.left - enemies[eid].left;
 			var deltaY = playerOne.top - enemies[eid].top;
-			var speedX = 5*(deltaX/deltaY);
+			var angle = Math.atan2(deltaY, deltaX);
+			var speedX = 5*Math.cos(angle);
+			var speedY = 5*Math.sin(angle);
 			
 			if(enemies[eid].type == "enemy3"){
 				if(Math.random()<=0.20){
-					energyBalls.push({left: (enemies[eid].left+22), top: (enemies[eid].top+52), active: 1, vectorX: speedX, vectorY: 5});
+					energyBalls.push({left: (enemies[eid].left+22), top: (enemies[eid].top+52), active: 1, velocity : {x: speedX, y: speedY}});
 				}
 			}
 		}
@@ -399,8 +403,8 @@
 
 	function moveEnergyBalls(){
 		for(var eid=0; eid<energyBalls.length; eid++){
-			energyBalls[eid].top += energyBalls[eid].vectorY;
-			energyBalls[eid].left += energyBalls[eid].vectorX;
+			energyBalls[eid].top += energyBalls[eid].velocity.y;
+			energyBalls[eid].left += energyBalls[eid].velocity.x;
 		}
 	}
 
@@ -609,7 +613,7 @@
 			hudContent += "<div class='life'></div>";
 		}
 		document.getElementById("livesDisplay").innerHTML = hudContent;
-		console.log(hudContent);
+		//console.log(hudContent);
 		document.getElementById("scoreDisplay").innerHTML = '<div id="scoreDisplay">'+playerOne.score+'</div>';
 	}
 
@@ -623,6 +627,10 @@
 		drawEnemies();
 		drawProjectiles();
 		clearInactive();
+	}
+
+	function choreography(){
+		
 	}
 
 	function gameLoop(){
@@ -657,16 +665,16 @@
 		//console.log(e);
 		
 		if(e.keyCode == 65 && gameOn){ // Left
-			playerOne.vectorX = -8;
+			playerOne.velocity.x = -8;
 		}
 		else if(e.keyCode == 68 && gameOn){ // Right
-			playerOne.vectorX = 8;
+			playerOne.velocity.x = 8;
 		}
 		else if(e.keyCode == 87 && gameOn){ // Up
-			playerOne.vectorY = -8;
+			playerOne.velocity.y = -8;
 		}
 		else if(e.keyCode == 83 && gameOn){ // Down
-			playerOne.vectorY = 8;
+			playerOne.velocity.y = 8;
 		}
 		if(e.keyCode == 32 && gameOn && weaponCharged){ // Fire
 			blasterFire();
@@ -691,16 +699,16 @@
 	document.onkeyup = function(e){
 		//console.log(e);
 		if(e.keyCode == 65 && gameOn){ // Left
-			playerOne.vectorX = 0;
+			playerOne.velocity.x = 0;
 		}
 		if(e.keyCode == 68 && gameOn){ // Right
-			playerOne.vectorX = 0;
+			playerOne.velocity.x = 0;
 		}
 		if(e.keyCode == 87 && gameOn){ // Up
-			playerOne.vectorY = 0;
+			playerOne.velocity.y = 0;
 		}
 		if(e.keyCode == 83 && gameOn){ // Down
-			playerOne.vectorY = 0;
+			playerOne.velocity.y = 0;
 		}
 		drawPlayer();
 	}
@@ -708,10 +716,11 @@
 // Initialization
 
 	gameLoop(); // Run game
-	newWave(); // Send first wave
+	//newWave(); // Send first wave
 	returnFire(); // Stuff to dodge!
-	setTimeout(spawnSphere, 18000, -120, 200); // Set timer for first sphere sequence
-	//spawnStarfighter(0, 0, 400, 230);
+	//setTimeout(spawnSphere, 18000, -120, 200); // Set timer for first sphere sequence
+	spawnStarfighter(0, 0, 400, 230);
+	//spawnStarfighter(800,0,100,500);
 
 
 	
