@@ -517,20 +517,20 @@
 	function eventCheck(){
 		for(var eid=0; eid<enemies.length; eid++){ // Check each enemy for collisions
 			for(var mid=0; mid<missiles.length; mid++){ // Check for collision with missile
-				if(missiles[mid].left >= (enemies[eid].left+3) && missiles[mid].left <= (enemies[eid].left+67)){
-					if((missiles[mid].top+12) >= (enemies[eid].top+3) && missiles[mid].top <= (enemies[eid].top+72)){
+				if(missiles[mid].left >= (enemies[eid].position.left+3) && missiles[mid].left <= (enemies[eid].position.left+67)){
+					if((missiles[mid].top+12) >= (enemies[eid].position.top+3) && missiles[mid].top <= (enemies[eid].position.top+72)){
 						enemies[eid].life--;
 						missiles[mid].active = 0;
 						if(enemies[eid].life == 0){
 							enemies[eid].active = 0;
 							playerOne.score += 10;
-							boxDrop(enemies[eid].left, enemies[eid].top);
+							boxDrop(enemies[eid].position.left, enemies[eid].position.top);
 						}
 					}
 				}
 			}
-			if((playerOne.left+31) >= (enemies[eid].left) && (playerOne.left+31) <= (enemies[eid].left+70)){ 
-				if((playerOne.top+70) >= (enemies[eid].top+5) && playerOne.top <= (enemies[eid].top+55)){ // Player collides with enemy ship
+			if((playerOne.left+31) >= (enemies[eid].position.left) && (playerOne.left+31) <= (enemies[eid].position.left+70)){ 
+				if((playerOne.top+70) >= (enemies[eid].position.top+5) && playerOne.top <= (enemies[eid].position.top+55)){ // Player collides with enemy ship
 					enemies[eid].active = 0;
 					if(!playerOne.shield){
 						playerOne.life--;
@@ -544,7 +544,7 @@
 						if(enemies[eid].life == 0){
 							enemies[eid].active = 0;
 							playerOne.score += 10;
-							boxDrop(enemies[eid].left, enemies[eid].top);
+							boxDrop(enemies[eid].position.left, enemies[eid].position.top);
 						}
 					}
 					drawPlayer();
