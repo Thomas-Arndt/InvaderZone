@@ -85,12 +85,6 @@
 		height: 120px;
 		position: absolute;
 	}
-	.enemy3{
-		background-image: url("img/Alien Starfighter.png");
-		width: 70px;
-		height: 75px;
-		position: absolute;
-	}
 	.missile{
 		background-image: url("img/fireblast.png");
 		width: 8px;
@@ -207,26 +201,6 @@
 		document.getElementById("enemies").innerHTML = enemyContent;
 	}
 
-	function newWave(){
-		if(gameOn){
-			wave = [
-				{left: 150, top: -75, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0},
-				{left: 250, top: -125, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0},
-				{left: 350, top: -75, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0},
-				{left: 450, top: -125, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0},
-				{left: 550, top: -75, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0},
-				{left: 650, top: -125, active: 1, type: "enemy3", life: 1, velocity: {x: 0, y: 1}, angle: 0}
-			];
-			for(var idx=0; idx<wave.length; idx++){
-				enemies.push(wave[idx]);
-			}
-			drawEnemies();
-			if(gameOn){
-				setTimeout(newWave, (gameSpeed*10000)); // Send a new wave of enemies in (10*gameSpeed) seconds
-			}
-		}
-	}
-
 	function spawnSphere(leftPos, topPos){
 		enemies.push({position: {left: leftPos, top: topPos}, 
 						active: 1, 
@@ -234,10 +208,10 @@
 						life: 5, 
 						velocity: {x: 0, y: 0}, 
 						angle: 0, 
-						seqPointer: 0}
+						seqPointer: delta}
 					);
 		if(gameOn){
-			setTimeout(spawnSphere, 18000, -120, 200);
+			//setTimeout(spawnSphere, 18000, -120, 200);
 		}
 	}
 
@@ -254,10 +228,12 @@
 									pointB: {left: pointB.left, top: pointB.top}, 
 									active: 1, 
 									type: "enemy1", 
-									life: 2, 
+									life: 1, 
 									velocity: {x: velocityX, y: velocityY}, 
 									angle: (-angleStart)-90, 
-									seqPointer: 0}
+									seqPointer: delta,
+									seqStage: 1,
+									roundCount: 0}
 					);
 	}
 
@@ -276,6 +252,39 @@
 		}
 	}
 
+	function starfighterSequence(){
+		for(var eid=0; eid<enemies.length; eid++){
+			if(enemies[eid].type=="enemy1" && enemies[eid].active==1){
+				if(Math.abs(enemies[eid].pointB.left-enemies[eid].position.left) <= 5 && Math.abs(enemies[eid].pointB.top-enemies[eid].position.top) <= 5){
+					if(enemies[eid].seqStage == 1){
+						enemies[eid].seqStage = 2;
+						enemies[eid].seqPointer = delta;
+					}
+					else if(enemies[eid].seqStage == 2 && delta >= enemies[eid].seqPointer+150){
+						var temp = {};
+						temp = enemies[eid].pointA;
+						enemies[eid].pointA = enemies[eid].pointB;
+						enemies[eid].pointB = temp;
+						var deltaX = enemies[eid].pointB.left - enemies[eid].pointA.left;
+						var deltaY = enemies[eid].pointA.top - enemies[eid].pointB.top;
+						var angleNew = Math.atan2(deltaY, deltaX);
+						var velocityX = 10*Math.cos(angleNew);
+						var velocityY = -10*Math.sin(angleNew);
+						enemies[eid].velocity.x = velocityX;
+						enemies[eid].velocity.y = velocityY;
+						enemies[eid].angle = angleNew+90;
+						enemies[eid].seqStage = 3;
+					}
+				}
+				if(Math.abs(enemies[eid].pointB.top-enemies[eid].position.top) > 5){
+					if(enemies[eid].seqStage == 3){
+						enemies[eid].seqStage = 4;
+					}
+				}
+			}
+		}
+	}	
+
 	function sphereSequence(){
 		for(var eid=0; eid<enemies.length; eid++){
 			if(enemies[eid].type == "enemy2" && enemies[eid].active == 1){
@@ -283,44 +292,55 @@
 				var deltaY = playerOne.top - enemies[eid].position.top;
 				var speedX = 5*(deltaX/deltaY);
 
-				if(enemies[eid].seqPointer < 50){
+				if((delta-enemies[eid].seqPointer) < 50){
 					enemies[eid].velocity.x = 6.5;
 					enemies[eid].velocity.y = -3;
 				}
-				else if(enemies[eid].seqPointer < 200){
+				else if((delta-enemies[eid].seqPointer) < 200){
 					enemies[eid].velocity.x = 0;
 					enemies[eid].velocity.y = 0;
 				}
-				else if(enemies[eid].seqPointer < 255){
+				else if((delta-enemies[eid].seqPointer) < 255){
 					enemies[eid].velocity.x = 7;
 				}
-				else if(enemies[eid].seqPointer < 405){
+				else if((delta-enemies[eid].seqPointer) < 405){
 					enemies[eid].velocity.x = 0;
 					enemies[eid].velocity.y = 0;
 				}
-				else if(enemies[eid].seqPointer < 455){
+				else if((delta-enemies[eid].seqPointer) < 455){
 					enemies[eid].velocity.x = 6.5;
 					enemies[eid].velocity.y = 3;
 				}
-				else if(enemies[eid].seqPointer >= 455){
+				else if((delta-enemies[eid].seqPointer) >= 455){
 					enemies[eid].active = 0;
 				}
-				if(enemies[eid].seqPointer == 75 || enemies[eid].seqPointer == 90 || enemies[eid].seqPointer == 105 || enemies[eid].seqPointer == 160 || enemies[eid].seqPointer == 175 || enemies[eid].seqPointer == 190){
+				if(delta-enemies[eid].seqPointer == 75 || delta-enemies[eid].seqPointer == 90 || delta-enemies[eid].seqPointer == 105 || delta-enemies[eid].seqPointer == 160 || delta-enemies[eid].seqPointer == 175 || delta-enemies[eid].seqPointer == 190){
 					energyBalls.push({left: (enemies[eid].position.left+48), 
 										top: (enemies[eid].position.top+48), 
 										active: 1, 
 										velocity: {x: speedX, y: 5}}
 									);
 				}
-				if(enemies[eid].seqPointer == 280 || enemies[eid].seqPointer == 295 || enemies[eid].seqPointer == 310 || enemies[eid].seqPointer == 365 || enemies[eid].seqPointer == 380 || enemies[eid].seqPointer == 395){
+				if(delta-enemies[eid].seqPointer == 280 || delta-enemies[eid].seqPointer == 295 || delta-enemies[eid].seqPointer == 310 || delta-enemies[eid].seqPointer == 365 || delta-enemies[eid].seqPointer == 380 || delta-enemies[eid].seqPointer == 395){
 					energyBalls.push({left: (enemies[eid].position.left+48), 
 										top: (enemies[eid].position.top+48), 
 										active: 1, 
 										velocity: {x: speedX, y: 5}}
 									);
 				}
-				enemies[eid].seqPointer++;
+				//enemies[eid].seqPointer++;
 			}
+		}
+	}
+
+	function starfighterWaveSequence(){
+		var sineEvasion = Math.sin(Math.PI*(delta/90));
+		for(var eid=0; eid<enemies.length; eid++){
+			if(enemies[eid].type == "enemy3"){		
+				enemies[eid].velocity.x = sineEvasion*1.15;
+			}
+			enemies[eid].position.top += enemies[eid].velocity.y;
+			enemies[eid].position.left += enemies[eid].velocity.x;
 		}
 	}
 
@@ -341,15 +361,9 @@
 
 	function moveEnemies(){
 		sphereSequence();
+		starfighterSequence();
+		starfighterWaveSequence();
 		arrivals("enemy1");
-		var sineEvasion = Math.sin(Math.PI*(delta/90));
-		for(var eid=0; eid<enemies.length; eid++){
-			if(enemies[eid].type == "enemy3"){		
-				enemies[eid].velocity.x = sineEvasion*1.15;
-			}
-			enemies[eid].position.top += enemies[eid].velocity.y;
-			enemies[eid].position.left += enemies[eid].velocity.x;
-		}
 	}
 	
 	function blasterFire(){
@@ -393,7 +407,7 @@
 		}
 	}
 
-	function returnFire(){ // 20% chance an enemy attack succeeds, with 1 second delay
+	function returnFire(){ 
 		for(var eid=0; eid<enemies.length; eid++){
 			var deltaX = playerOne.left - enemies[eid].position.left;
 			var deltaY = playerOne.top - enemies[eid].position.top;
@@ -401,7 +415,19 @@
 			var speedX = 5*Math.cos(angle);
 			var speedY = 5*Math.sin(angle);
 			
-			if(enemies[eid].type == "enemy3"){
+			if(enemies[eid].type == "enemy1" && enemies[eid].active == 1){ // Starfighters
+				if(Math.abs(enemies[eid].pointB.left-enemies[eid].position.left) <= 5 && Math.abs(enemies[eid].pointB.top-enemies[eid].position.top) <= 5){
+					if((delta-enemies[eid].seqPointer) >= (enemies[eid].roundCount*50)){
+						energyBalls.push({left: (enemies[eid].position.left+22), 
+											top: (enemies[eid].position.top+52), 
+											active: 1, 
+											velocity : {x: speedX, y: speedY}}
+										);
+						enemies[eid].roundCount++;
+					}
+				}
+			}
+			if(enemies[eid].type == "enemy3"){ // Starfighter Waves
 				if(Math.random()<=0.20){
 					energyBalls.push({left: (enemies[eid].position.left+22), 
 										top: (enemies[eid].position.top+52), 
@@ -411,7 +437,6 @@
 				}
 			}
 		}
-		setTimeout(returnFire, 2000)
 	}
 
 	function drawProjectiles(){
@@ -515,7 +540,13 @@
 	}
 
 	function eventCheck(){
-		for(var eid=0; eid<enemies.length; eid++){ // Check each enemy for collisions
+		for(var eid=0; eid<enemies.length; eid++){ // Check each enemy for events
+			if(enemies[eid].seqStage == 4){ // Check if enemies have reached final stage of their sequence
+				if(Math.abs(enemies[eid].pointB.left-enemies[eid].position.left) <= 5 && Math.abs(enemies[eid].pointB.top-enemies[eid].position.top) <= 5){
+					enemies[eid].active = 0;
+
+				}
+			}
 			for(var mid=0; mid<missiles.length; mid++){ // Check for collision with missile
 				if(missiles[mid].left >= (enemies[eid].position.left+3) && missiles[mid].left <= (enemies[eid].position.left+67)){
 					if((missiles[mid].top+12) >= (enemies[eid].position.top+3) && missiles[mid].top <= (enemies[eid].position.top+72)){
@@ -610,7 +641,6 @@
 				}
 			}
 		}
-		
 		// Increase speed of game every 500 points
 		if(gameSpeed > 0.35){
 			gameSpeed = Math.pow(0.85, Math.floor(playerOne.score/500));
@@ -639,7 +669,6 @@
 			hudContent += "<div class='life'></div>";
 		}
 		document.getElementById("livesDisplay").innerHTML = hudContent;
-		//console.log(hudContent);
 		document.getElementById("scoreDisplay").innerHTML = '<div id="scoreDisplay">'+playerOne.score+'</div>';
 	}
 
@@ -655,17 +684,37 @@
 		clearInactive();
 	}
 
+
+
+
 	function choreography(){
-		
+		if(delta == 25){
+			spawnStarfighter({left: 100, top: -65}, {left: 100, top: 300});
+		}
+		if(delta == 60){
+			spawnStarfighter({left: 600, top: -65}, {left: 600, top: 250});
+		}
+		if(delta == 110){
+			spawnStarfighter({left: 540, top: -65}, {left: 540, top: 150});
+		}if(delta == 140){
+			spawnStarfighter({left: 680, top: -65}, {left: 680, top: 150});
+		}
+
 	}
+
+
+
 
 	function gameLoop(){
 		movePlayer();
 		drawPlayer();
 
+		choreography();
+
 		moveEnemies();
 		drawEnemies();
 
+		
 		moveMissiles();
 		moveEnergyBalls();
 		drawProjectiles();
@@ -676,9 +725,13 @@
 		eventCheck();
 
 		clearInactive();
+
+		returnFire();
+
 		updateHud();
 
 		delta++;
+
 		if(gameOn){
 			setTimeout(gameLoop, (gameSpeed*30));
 		}
@@ -715,8 +768,6 @@
 				gameOn = true;
 				document.getElementById("centerMessage").style.visibility = "hidden";
 				gameLoop();
-				setTimeout(newWave, (gameSpeed*10000));
-				setTimeout(spawnSphere, 18000, -120, 200);
 			}
 		}
 		drawPlayer();
@@ -742,11 +793,7 @@
 // Initialization
 
 	gameLoop(); // Run game
-	//newWave(); // Send first wave
-	returnFire(); // Stuff to dodge!
-	setTimeout(spawnSphere, 1000, -120, 200); // Set timer for first sphere sequence
-	spawnStarfighter({left: 0, top: 0}, {left: 700, top: 300});
-	//spawnStarfighter(800,0,100,500);
+	//setTimeout(spawnSphere, 1000, -120, 200); // Set timer for first sphere sequence
 
 
 	
