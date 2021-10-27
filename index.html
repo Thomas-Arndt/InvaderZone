@@ -10,13 +10,17 @@
 		padding: 0px;
 		position: fixed;
 	}
+	#window{
+		width: 900px;
+		height: 750px;
+		clip: rect(0px, 900px, 833px, 0px);
+	}
 	#starfield{
 		background-image: url("img/starfield.png");
 		width: 900px;
-		height: 750px;
+		height: 2300px;
 		position: absolute;
-		left: 0;
-		top: -1500;
+		top: -1500px;
 	}
 	#footer{
 		background-color: gray;
@@ -126,7 +130,8 @@
 
 	</style>
 
-	<div id="starfield">
+	<div id="window">
+		<div id="starfield"></div>
 		<div id="enemies"></div>
 		<div id="missiles"></div>
 		<div id="energyballs"></div>
@@ -160,6 +165,8 @@
 
 	var gameSpeed = 1;
 
+	var backgroundPosition = -100;
+
 	var weaponCharged = true;
 
 	var playerOne = {
@@ -183,6 +190,18 @@
 	var boxes = [];
 
 // Functions	
+
+	function moveBackground(){
+		var background = document.getElementById("starfield");
+		if(backgroundPosition >= 0){
+			backgroundPosition = -1550;
+			background.style.top = backgroundPosition+'px';
+		}
+		else{
+			backgroundPosition++;
+			background.style.top = backgroundPosition+'px';
+		}
+	}
 
 	function drawPlayer(){
 		if(playerOne.shield){
@@ -698,6 +717,8 @@
 //Game Loop
 
 	function gameLoop(){
+		moveBackground();
+
 		movePlayer();
 		drawPlayer();
 
