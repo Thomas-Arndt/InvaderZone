@@ -202,7 +202,7 @@
 		var enemyContent = "";
 
 		for(var eid=0; eid<enemies.length; eid++){
-			enemyContent += "<div class='"+enemies[eid].type+"' style='left:"+enemies[eid].left+"px; top:"+enemies[eid].top+"px; transform: rotate("+(enemies[eid].angle*57)+"deg);'></div>";
+			enemyContent += "<div class='"+enemies[eid].type+"' style='left:"+enemies[eid].position.left+"px; top:"+enemies[eid].position.top+"px; transform: rotate("+(enemies[eid].angle*57)+"deg);'></div>";
 		}
 		document.getElementById("enemies").innerHTML = enemyContent;
 	}
@@ -227,46 +227,60 @@
 		}
 	}
 
-	function spawnStarfighter(leftStartPos, topStartPos, leftEndPos, topEndPos){
-		var deltaX = leftEndPos - leftStartPos;
-		var deltaY = topStartPos - topEndPos;
+	function spawnSphere(leftPos, topPos){
+		enemies.push({position: {left: leftPos, top: topPos}, 
+						active: 1, 
+						type: "enemy2", 
+						life: 5, 
+						velocity: {x: 0, y: 0}, 
+						angle: 0, 
+						seqPointer: 0}
+					);
+		if(gameOn){
+			setTimeout(spawnSphere, 18000, -120, 200);
+		}
+	}
+
+	function spawnStarfighter(pointA, pointB){
+		var deltaX = pointB.left - pointA.left;
+		var deltaY = pointA.top - pointB.top;
 		var angleStart = Math.atan2(deltaY, deltaX);
 		var velocityX = 10*Math.cos(angleStart);
 		var velocityY = -10*Math.sin(angleStart);
-		enemies.push({left: leftStartPos, top: topStartPos, leftEnd: leftEndPos, topEnd: topEndPos, active: 1, type: "enemy1", life: 2, velocity: {x: velocityX, y: velocityY}, angle: (-angleStart)-90, seqPointer: 0});
+		enemies.push({position: {left: pointA.left, 
+									top: pointA.top}, 
+									pointA: {left: pointA.left, 
+									top: pointA.top}, 
+									pointB: {left: pointB.left, top: pointB.top}, 
+									active: 1, 
+									type: "enemy1", 
+									life: 2, 
+									velocity: {x: velocityX, y: velocityY}, 
+									angle: (-angleStart)-90, 
+									seqPointer: 0}
+					);
 	}
 
 	function arrivals(enemyType){
 		for (var eid = 0; eid<enemies.length; eid++){
 			if(enemies[eid].type == enemyType && enemies[eid].active == 1){
-				if(Math.abs(enemies[eid].leftEnd-enemies[eid].left) <= 5 && Math.abs(enemies[eid].topEnd-enemies[eid].top) <= 5){
+				if(Math.abs(enemies[eid].pointB.left-enemies[eid].position.left) <= 5 && Math.abs(enemies[eid].pointB.top-enemies[eid].position.top) <= 5){
 					enemies[eid].velocity.x = 0;
 					enemies[eid].velocity.y = 0;
-					var deltaX = playerOne.left- enemies[eid].left;
-					var deltaY = playerOne.top - enemies[eid].top;
+					var deltaX = playerOne.left- enemies[eid].position.left;
+					var deltaY = playerOne.top - enemies[eid].position.top;
 					var angleNew = Math.atan2(deltaY, deltaX);
 					enemies[eid].angle = angleNew - 90;
 				}
-				else if(Math.abs(enemies[eid].leftEnd-enemies[eid].left) <= 50 && Math.abs(enemies[eid].topEnd-enemies[eid].top) <= 50){
-					enemies[eid].velocity.x -= 0.5;
-					enemies[eid].velocity.y -= 0.5;
-				}
 			}
-		}
-	}
-
-	function spawnSphere(leftPos, topPos){
-		enemies.push({left: leftPos, top: topPos, active: 1, type: "enemy2", life: 5, velocity: {x: 0, y: 0}, angle: 0, seqPointer: 0});
-		if(gameOn){
-			setTimeout(spawnSphere, 18000, -120, 200);
 		}
 	}
 
 	function sphereSequence(){
 		for(var eid=0; eid<enemies.length; eid++){
 			if(enemies[eid].type == "enemy2" && enemies[eid].active == 1){
-				var deltaX = playerOne.left - enemies[eid].left;
-				var deltaY = playerOne.top - enemies[eid].top;
+				var deltaX = playerOne.left - enemies[eid].position.left;
+				var deltaY = playerOne.top - enemies[eid].position.top;
 				var speedX = 5*(deltaX/deltaY);
 
 				if(enemies[eid].seqPointer < 50){
@@ -292,10 +306,18 @@
 					enemies[eid].active = 0;
 				}
 				if(enemies[eid].seqPointer == 75 || enemies[eid].seqPointer == 90 || enemies[eid].seqPointer == 105 || enemies[eid].seqPointer == 160 || enemies[eid].seqPointer == 175 || enemies[eid].seqPointer == 190){
-					energyBalls.push({left: (enemies[eid].left+48), top: (enemies[eid].top+48), active: 1, velocity: {x: speedX, y: 5}});
+					energyBalls.push({left: (enemies[eid].position.left+48), 
+										top: (enemies[eid].position.top+48), 
+										active: 1, 
+										velocity: {x: speedX, y: 5}}
+									);
 				}
 				if(enemies[eid].seqPointer == 280 || enemies[eid].seqPointer == 295 || enemies[eid].seqPointer == 310 || enemies[eid].seqPointer == 365 || enemies[eid].seqPointer == 380 || enemies[eid].seqPointer == 395){
-					energyBalls.push({left: (enemies[eid].left+48), top: (enemies[eid].top+48), active: 1, velocity: {x: speedX, y: 5}});
+					energyBalls.push({left: (enemies[eid].position.left+48), 
+										top: (enemies[eid].position.top+48), 
+										active: 1, 
+										velocity: {x: speedX, y: 5}}
+									);
 				}
 				enemies[eid].seqPointer++;
 			}
@@ -325,8 +347,8 @@
 			if(enemies[eid].type == "enemy3"){		
 				enemies[eid].velocity.x = sineEvasion*1.15;
 			}
-			enemies[eid].top += enemies[eid].velocity.y;
-			enemies[eid].left += enemies[eid].velocity.x;
+			enemies[eid].position.top += enemies[eid].velocity.y;
+			enemies[eid].position.left += enemies[eid].velocity.x;
 		}
 	}
 	
@@ -373,15 +395,19 @@
 
 	function returnFire(){ // 20% chance an enemy attack succeeds, with 1 second delay
 		for(var eid=0; eid<enemies.length; eid++){
-			var deltaX = playerOne.left - enemies[eid].left;
-			var deltaY = playerOne.top - enemies[eid].top;
+			var deltaX = playerOne.left - enemies[eid].position.left;
+			var deltaY = playerOne.top - enemies[eid].position.top;
 			var angle = Math.atan2(deltaY, deltaX);
 			var speedX = 5*Math.cos(angle);
 			var speedY = 5*Math.sin(angle);
 			
 			if(enemies[eid].type == "enemy3"){
 				if(Math.random()<=0.20){
-					energyBalls.push({left: (enemies[eid].left+22), top: (enemies[eid].top+52), active: 1, velocity : {x: speedX, y: speedY}});
+					energyBalls.push({left: (enemies[eid].position.left+22), 
+										top: (enemies[eid].position.top+52), 
+										active: 1, 
+										velocity : {x: speedX, y: speedY}}
+									);
 				}
 			}
 		}
@@ -718,8 +744,8 @@
 	gameLoop(); // Run game
 	//newWave(); // Send first wave
 	returnFire(); // Stuff to dodge!
-	//setTimeout(spawnSphere, 18000, -120, 200); // Set timer for first sphere sequence
-	spawnStarfighter(0, 0, 400, 230);
+	setTimeout(spawnSphere, 1000, -120, 200); // Set timer for first sphere sequence
+	spawnStarfighter({left: 0, top: 0}, {left: 700, top: 300});
 	//spawnStarfighter(800,0,100,500);
 
 
