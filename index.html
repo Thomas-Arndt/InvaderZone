@@ -260,9 +260,9 @@
 					);
 	}
 
-	function arrivals(enemyType){
+	function arrivals(){
 		for (var eid = 0; eid<enemies.length; eid++){
-			if(enemies[eid].type == enemyType && enemies[eid].active == 1){
+			if(enemies[eid].active == 1){
 				if(Math.abs(enemies[eid].pointB.left-enemies[eid].position.left) <= 5 && Math.abs(enemies[eid].pointB.top-enemies[eid].position.top) <= 5){
 					enemies[eid].velocity.x = 0;
 					enemies[eid].velocity.y = 0;
@@ -356,17 +356,6 @@
 		}
 	}
 
-	function starfighterWaveSequence(){
-		var sineEvasion = Math.sin(Math.PI*(delta/90));
-		for(var eid=0; eid<enemies.length; eid++){
-			if(enemies[eid].type == "enemy3"){		
-				enemies[eid].velocity.x = sineEvasion*1.15;
-			}
-			enemies[eid].position.top += enemies[eid].velocity.y;
-			enemies[eid].position.left += enemies[eid].velocity.x;
-		}
-	}
-
 	function movePlayer(){
 		if((playerOne.left+playerOne.velocity.x+70) < 890 && (playerOne.left+playerOne.velocity.x) > 10){
 			playerOne.left += playerOne.velocity.x;
@@ -385,8 +374,11 @@
 	function moveEnemies(){
 		sphereSequence();
 		starfighterSequence();
-		starfighterWaveSequence();
-		arrivals("enemy1");
+		arrivals();
+		for(var eid=0; eid<enemies.length; eid++){
+			enemies[eid].position.top += enemies[eid].velocity.y;
+			enemies[eid].position.left += enemies[eid].velocity.x;
+		}
 	}
 	
 	function blasterFire(){
