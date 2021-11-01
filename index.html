@@ -153,9 +153,6 @@
 	</div>
 	
 
-	
-
-
 	<script type="text/javascript">
 
 // Variables
@@ -240,6 +237,7 @@
 						active: 1, 
 						type: "enemy2", 
 						life: 5, 
+						reward: 50,
 						velocity: {x: velocityX, y: velocityY}, 
 						angle: 0, 
 						seqPointer: delta,
@@ -262,6 +260,7 @@
 						active: 1, 
 						type: "enemy1", 
 						life: 1, 
+						reward: 10,
 						velocity: {x: velocityX, y: velocityY}, 
 						angle: (-angleStart)-90, 
 						seqPointer: delta,
@@ -382,7 +381,6 @@
 			}
 		}
 	}
-
 
 	function movePlayer(){
 		if((playerOne.left+playerOne.velocity.x+70) < 890 && (playerOne.left+playerOne.velocity.x) > 10){
@@ -537,13 +535,13 @@
 
 	function boxDrop(left,top){
 		var chance = Math.floor(Math.random()*100);
-		if(chance < 1){ // Drop extra life
+		if(chance < 10){ // Drop extra life
 			boxes.push({left: (left+31), top: (top-12), type: 3, active: 1});
 		}
-		else if(chance >= 1 && chance < 4){ // Drop shield
+		else if(chance >= 10 && chance < 40){ // Drop shield
 			boxes.push({left: (left+31), top: (top-12), type: 2, active: 1});
 		}
-		else if(chance >= 4 && chance < 10){ // Drop weapon upgrade
+		else if(chance >= 40 && chance < 100){ // Drop weapon upgrade
 			boxes.push({left: (left+31), top: (top-12), type: 1, active: 1});
 		}
 
@@ -607,8 +605,10 @@
 						missiles[mid].active = 0;
 						if(enemies[eid].life == 0){
 							enemies[eid].active = 0;
-							playerOne.score += 10;
-							boxDrop(enemies[eid].position.left, enemies[eid].position.top);
+							playerOne.score += enemies[eid].reward;
+							if(enemies[eid].type == "enemy2"){
+								boxDrop(enemies[eid].position.left, enemies[eid].position.top);
+							}
 						}
 					}
 				}
@@ -627,8 +627,10 @@
 						playerOne.top = 620;
 						if(enemies[eid].life == 0){
 							enemies[eid].active = 0;
-							playerOne.score += 10;
-							boxDrop(enemies[eid].position.left, enemies[eid].position.top);
+							playerOne.score += enemies[eid].reward;
+							if(enemies[eid].type == "enemy2"){
+								boxDrop(enemies[eid].position.left, enemies[eid].position.top);
+							}						
 						}
 					}
 					drawPlayer();
@@ -739,14 +741,14 @@
 		if(delta == 60){
 			spawnStarfighter({left: 600, top: -65}, {left: 600, top: 250});
 		}
+		if(delta == 85){
+			spawnSphere({left:-120, top:100}, {left:200, top:200}, {left:450, top:100}, {left:200, top:100}, {left:-120, top:100})
+		}
 		if(delta == 110){
 			spawnStarfighter({left: 540, top: -65}, {left: 540, top: 150});
 		}
 		if(delta == 250){
 			spawnStarfighter({left: 680, top: -65}, {left: 680, top: 150});
-		}
-		if(delta == 0){
-			spawnSphere({left:0, top:100}, {left:200, top:200}, {left:450, top:100}, {left:200, top:100}, {left:-120, top:100})
 		}
 	}
 
