@@ -16,11 +16,11 @@
 		clip: rect(0px, 900px, 833px, 0px);
 	}
 	#starfield{
-		background-image: url("img/starfield.png");
+		background-image: url("img/starfield900x6750.png");
 		width: 900px;
-		height: 2300px;
+		height: 6750px;
 		position: absolute;
-		top: -1500px;
+		top: -6000px;
 	}
 	#footer{
 		background-color: gray;
@@ -163,7 +163,7 @@
 
 	var gameSpeed = 1;
 
-	var backgroundPosition = -100;
+	var backgroundPosition = -6000;
 
 	var weaponCharged = true;
 
@@ -192,11 +192,11 @@
 	function moveBackground(){
 		var background = document.getElementById("starfield");
 		if(backgroundPosition >= 0){
-			backgroundPosition = -1550;
+			backgroundPosition = -6000;
 			background.style.top = backgroundPosition+'px';
 		}
 		else{
-			backgroundPosition++;
+			backgroundPosition += 1.5;
 			background.style.top = backgroundPosition+'px';
 		}
 	}
@@ -747,8 +747,11 @@
 		if(delta == 110){
 			spawnStarfighter({left: 540, top: -65}, {left: 540, top: 150});
 		}
-		if(delta == 250){
+		if(delta == 350){
 			spawnStarfighter({left: 680, top: -65}, {left: 680, top: 150});
+		}
+		if(delta == 395){
+			spawnStarfighter({left: 100, top: -65}, {left: 100, top: 300});
 		}
 	}
 
@@ -844,8 +847,6 @@
 // Initialization
 
 	gameLoop(); // Run game
-	//setTimeout(spawnSphere, 1000, -120, 200); // Set timer for first sphere sequence
-
 
 	
 	</script>
