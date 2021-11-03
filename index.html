@@ -16,7 +16,7 @@
 		clip: rect(0px, 900px, 833px, 0px);
 	}
 	#starfield{
-		background-image: url("img/starfield900x6750.png");
+		background-image: url("img/LevelOne.png");
 		width: 900px;
 		height: 6750px;
 		position: absolute;
@@ -191,11 +191,11 @@
 
 	function moveBackground(){
 		var background = document.getElementById("starfield");
-		if(backgroundPosition >= 0){
-			backgroundPosition = -6000;
-			background.style.top = backgroundPosition+'px';
-		}
-		else{
+		//if(backgroundPosition >= 0){
+		//	backgroundPosition = -6000;
+		//	background.style.top = backgroundPosition+'px';
+		//}
+		if(backgroundPosition < 0){
 			backgroundPosition += 1.5;
 			background.style.top = backgroundPosition+'px';
 		}
@@ -295,7 +295,7 @@
 						enemies[eid].seqStage = 2;
 						enemies[eid].seqPointer = delta;
 					}
-					else if(enemies[eid].seqStage == 2 && delta >= enemies[eid].seqPointer+150){
+					else if(enemies[eid].seqStage == 2 && delta >= enemies[eid].seqPointer+250){
 						enemies[eid].destination = enemies[eid].pointA;
 						var deltaX = enemies[eid].destination.left - enemies[eid].pointB.left;
 						var deltaY = enemies[eid].pointB.top - enemies[eid].destination.top;
@@ -450,8 +450,8 @@
 			var deltaX = playerOne.left - enemies[eid].position.left;
 			var deltaY = playerOne.top - enemies[eid].position.top;
 			var angle = Math.atan2(deltaY, deltaX);
-			var speedX = 5*Math.cos(angle);
-			var speedY = 5*Math.sin(angle);
+			var speedX = 8*Math.cos(angle);
+			var speedY = 8*Math.sin(angle);
 			
 			if(enemies[eid].type == "enemy1" && enemies[eid].active == 1){ // Starfighters
 				if(enemies[eid].seqStage == 2){
@@ -476,12 +476,12 @@
 						energyBalls.push({left: (enemies[eid].position.left+22), 
 											top: (enemies[eid].position.top+52), 
 											active: 1, 
-											velocity : {x: 5*Math.cos(angle-0.25), y: 5*Math.sin(angle-0.25)}}
+											velocity : {x: 8*Math.cos(angle-0.25), y: 8*Math.sin(angle-0.25)}}
 										);
 						energyBalls.push({left: (enemies[eid].position.left+22), 
 											top: (enemies[eid].position.top+52), 
 											active: 1, 
-											velocity : {x: 5*Math.cos(angle+0.25), y: 5*Math.sin(angle+0.25)}}
+											velocity : {x: 8*Math.cos(angle+0.25), y: 8*Math.sin(angle+0.25)}}
 										);
 						enemies[eid].roundCount++;
 					}
