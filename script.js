@@ -584,11 +584,20 @@ function choreography(){
     if(delta == 60){
         spawnStarfighter({left: 600, top: -65}, {left: 600, top: 250});
     }
-    if(delta == 85){
-        spawnSphere({left:-120, top:100}, {left:200, top:200}, {left:450, top:100}, {left:200, top:100}, {left:-120, top:100})
-    }
     if(delta == 110){
         spawnStarfighter({left: 540, top: -65}, {left: 540, top: 150});
+    }
+    if(delta == 160){
+        spawnSphere({left:-120, top:100}, {left:200, top:200}, {left:450, top:100}, {left:200, top:100}, {left:-120, top:100})
+    }
+    if(delta == 175){
+        spawnStarfighter({left: 600, top: -65}, {left: 600, top: 250});
+    }
+    if(delta == 210){
+        spawnStarfighter({left: 540, top: -65}, {left: 540, top: 150});
+    }
+    if(delta == 245){
+        spawnStarfighter({left: 100, top: -65}, {left: 100, top: 300});
     }
     if(delta == 350){
         spawnStarfighter({left: 680, top: -65}, {left: 680, top: 150});
@@ -596,6 +605,49 @@ function choreography(){
     if(delta == 395){
         spawnStarfighter({left: 100, top: -65}, {left: 100, top: 300});
     }
+    if(delta == 525){
+        spawnSphere({left:820, top:100}, {left:600, top:200}, {left:450, top:100}, {left:200, top:100}, {left:-120, top:100})
+    }
+    if(delta == 595){
+        spawnStarfighter({left: 200, top: -65}, {left: 200, top: 350});
+    }
+    if(delta == 625){
+        spawnStarfighter({left: 300, top: -65}, {left: 300, top: 300});
+    }
+    if(delta == 700){
+        spawnStarfighter({left: 550, top: -65}, {left: 550, top: 350});
+    }
+    if(delta == 730){
+        spawnStarfighter({left: 650, top: -65}, {left: 650, top: 300});
+    }
+    if(delta == 830){
+        spawnStarfighter({left: 450, top: -65}, {left: 450, top: 250});
+    }
+    if(delta == 860){
+        spawnStarfighter({left: 300, top: -65}, {left: 300, top: 400});
+    }
+    if(delta == 890){
+        spawnStarfighter({left: 600, top: -65}, {left: 600, top: 380});
+    }
+    if(delta == 950){
+        spawnSphere({left:-120, top:-120}, {left:200, top:200}, {left:450, top:200}, {left:200, top:100}, {left:320, top:-120})
+    }
+    if(delta == 1020){
+        spawnStarfighter({left: 425, top: -65}, {left: 425, top: 250});
+    }
+    if(delta == 1020){
+        spawnStarfighter({left: 100, top: -65}, {left: 100, top: 250});
+    }
+    if(delta == 1020){
+        spawnStarfighter({left: 800, top: -65}, {left: 800, top: 250});
+    }
+    if(delta == 1100){
+        spawnStarfighter({left: 250, top: -65}, {left: 250, top: 350});
+    }
+    if(delta == 1100){
+        spawnStarfighter({left: 650, top: -65}, {left: 650, top: 350});
+    }
+
 }
 
 //Game Loop
@@ -628,7 +680,7 @@ function gameLoop(){
     updateHud();
 
     delta++;
-
+    console.log(delta);
     if(gameOn){
         setTimeout(gameLoop, (gameSpeed*30));
     }
