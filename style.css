@@ -1,0 +1,130 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    position: fixed;
+}
+#window{
+    width: 900px;
+    height: 750px;
+    clip: rect(0px, 900px, 833px, 0px);
+}
+#starfield{
+    background-image: url("img/LevelOne.png");
+    width: 900px;
+    height: 6750px;
+    position: absolute;
+    top: -6000px;
+}
+#footer{
+    background-color: gray;
+    color: white;
+    width: 900px;
+    height: 83px;
+    position: absolute;
+    top: 750px;
+}
+#hud{
+    width: 900px;
+    height: 750px;
+}
+#scoreDisplay{
+    width: 200px;
+    height: 75px;
+    color: cyan;
+    background-color: transparent;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    text-align: right;
+    font-size: 62px;
+}
+#centerMessage{
+    visibility: hidden;
+    width: 300px;
+    height: 80px;
+    color: lightblue;
+    background-color: transparent;
+    position: absolute;
+    top: 35%;
+    left: 300px;
+    text-align: center;
+    font-size: 62px;
+}
+#livesDisplay{
+    width: 375px;
+    height: 75px;
+    background-color: transparent;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    display: flex;
+    justify-content: space-evenly;
+    justify-content: left;
+}
+.playerOne{
+    background-image: url("img/Player_One.png");
+    width: 70px;
+    height: 75px;
+    position: absolute;
+    filter: drop-shadow(100px 60px 3px rgba(25,25,25,0.3));
+}
+.shield{
+    background-image: url("img/playerOneShield.png");
+    width: 70px;
+    height: 85px;
+    position: absolute;
+    filter: drop-shadow(100px 60px 3px rgba(108, 145, 255, 0.3));
+
+}
+.enemy1{
+    background-image: url("img/Alien Starfighter.png");
+    width: 70px;
+    height: 75px;
+    position: absolute;
+}
+.enemy2{
+    background-image: url("img/sphereShip.png");
+    width: 120px;
+    height: 120px;
+    position: absolute;
+    filter: drop-shadow(100px 60px 3px rgba(25,25,25,0.3));
+}
+.missile{
+    background-image: url("img/fireblast.png");
+    width: 8px;
+    height: 12px;
+    position: absolute;
+}
+.energyBall{
+    background-image: url("img/Energy Ball.png");
+    width: 25px;
+    height: 25px;
+    position: absolute;
+}
+.life{
+    background-image: url("img/Player_One.png");
+    width: 70px;
+    height: 75px;
+    position: relative;
+}
+.redBox{
+    background-image: url("img/Red Upgrade.png");
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    filter: drop-shadow(100px 60px 3px rgba(25,25,25,0.3));
+}
+.blueBox{
+    background-image: url("img/Blue Upgrade.png");
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    filter: drop-shadow(100px 60px 3px rgba(25,25,25,0.3));
+}
+.purpleBox{
+    background-image: url("img/Purple Upgrade.png");
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    filter: drop-shadow(100px 60px 3px rgba(25,25,25,0.3));
+}
