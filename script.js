@@ -65,11 +65,12 @@ function drawEnemies(){
 }
 
 function spawnSphere(pointA, pointB, pointC, pointD, pointE){
+    var sphereSpeed = 10;
     var deltaX = pointB.left - pointA.left;
     var deltaY = pointA.top - pointB.top;
     var angleStart = Math.atan2(deltaY, deltaX);
-    var velocityX = 10*Math.cos(angleStart);
-    var velocityY = -10*Math.sin(angleStart);
+    var velocityX = sphereSpeed*Math.cos(angleStart);
+    var velocityY = -sphereSpeed*Math.sin(angleStart);
     enemies.push({position: {left: pointA.left, top: pointA.top}, 
                     pointA: {left: pointA.left, top: pointA.top}, 
                     pointB: {left: pointB.left, top: pointB.top}, 
