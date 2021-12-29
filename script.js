@@ -91,11 +91,12 @@ function spawnSphere(pointA, pointB, pointC, pointD, pointE){
 }
 
 function spawnStarfighter(pointA, pointB){
+    var starfighterSpeed = 15;
     var deltaX = pointB.left - pointA.left;
     var deltaY = pointA.top - pointB.top;
     var angleStart = Math.atan2(deltaY, deltaX);
-    var velocityX = 10*Math.cos(angleStart);
-    var velocityY = -10*Math.sin(angleStart);
+    var velocityX = starfighterSpeed*Math.cos(angleStart);
+    var velocityY = -starfighterSpeed*Math.sin(angleStart);
     enemies.push({position: {left: pointA.left, top: pointA.top}, 
                     pointA: {left: pointA.left, top: pointA.top}, 
                     pointB: {left: pointB.left, top: pointB.top}, 
@@ -647,7 +648,30 @@ function choreography(){
     if(delta == 1100){
         spawnStarfighter({left: 650, top: -65}, {left: 650, top: 350});
     }
-
+    if(delta == 1300){
+        spawnStarfighter({left: 650, top: -65}, {left: 650, top: 350});
+    }
+    if(delta == 1350){
+        spawnStarfighter({left: 800, top: -65}, {left: 800, top: 150});
+    }
+    if(delta == 1375){
+        spawnStarfighter({left: 700, top: -65}, {left: 700, top: 250});
+    }
+    if(delta == 1500){
+        spawnStarfighter({left: 250, top: -65}, {left: 250, top: 400});
+    }
+    if(delta == 1550){
+        spawnStarfighter({left: 100, top: -65}, {left: 100, top: 250});
+    }
+    if(delta == 1575){
+        spawnStarfighter({left: 250, top: -65}, {left: 250, top: 150});
+    }
+    if(delta == 1625){
+        spawnSphere({left:-120, top:-120}, {left:200, top:200}, {left:450, top:200}, {left:200, top:100}, {left:320, top:-120})
+    }
+    if(delta == 1675){
+        spawnSphere({left:820, top:100}, {left:600, top:200}, {left:450, top:100}, {left:200, top:100}, {left:-120, top:100})
+    }
 }
 
 //Game Loop
